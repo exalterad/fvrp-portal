@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Fågelviken Roleplay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Huvudnavigering">
+      <div class="sidebar-header">
+        <span class="sidebar-logo-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.4" fill="none"/><path d="M24 14c-4 0-7 3-7 7 0 2 1 4 2 5l-2 6 4-3 3 4 3-4 4 3-2-6c1-1 2-3 2-5 0-4-3-7-7-7z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        </span>
+        <span class="sidebar-brand">Fågelviken RP</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard" class="nav-item nav-item-active" data-tab="dashboard" aria-current="page">Dashboard</a>
+        <a href="#regler" class="nav-item" data-tab="regler">Regler</a>
+        <a href="#whitelist" class="nav-item" data-tab="whitelist">Whitelist</a>
+        <a href="#reports" class="nav-item" data-tab="reports">Rapporter</a>
+        <a href="#support" class="nav-item" data-tab="support">Support</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="/logout" class="nav-item nav-item-logout">Logga ut</a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="main-header">
+        <h1 class="welcome-title">
+          Välkommen tillbaka, <span id="username">...</span>
+        </h1>
+      </header>
+
+      <div class="main-content">
+        <!-- Dashboard (startsida) -->
+        <div class="page-section active" id="dashboard" aria-labelledby="dashboard-title">
+          <h2 id="dashboard-title" class="sr-only">Dashboard</h2>
+
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <span class="stat-label">Serverstatus</span>
+              <span class="stat-value" id="status-badge" aria-live="polite">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Spelare online</span>
+              <span class="stat-value" id="player-count">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Uptime</span>
+              <span class="stat-value" id="server-uptime">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Mina karaktärer</span>
+              <span class="stat-value" id="character-count">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Total speltid</span>
+              <span class="stat-value" id="playtime">—</span>
+            </div>
+          </div>
+
+          <section class="characters-section" aria-labelledby="characters-heading">
+            <h3 id="characters-heading" class="characters-title">Mina karaktärer</h3>
+            <p class="characters-desc">Namn, jobb, pengar och speltid per karaktär.</p>
+            <div class="character-cards" id="character-cards">
+              <!-- Fylls via JS från /api/player-stats -->
+            </div>
+          </section>
+          <section class="queue-section" aria-labelledby="queue-heading">
+            <h3 id="queue-heading" class="queue-title">Kö till servern</h3>
+            <p class="queue-desc">Ställ dig i kö och få en notis när det finns plats. När det är din tur måste du acceptera inom 30 sekunder.</p>
+            <div class="queue-actions" id="queue-actions">
+              <button type="button" class="btn btn-primary" id="queue-join-btn">Ställ mig i kö</button>
+            </div>
+            <div class="queue-waiting" id="queue-waiting" hidden>
+              <p class="queue-position">Du är i kö (position <span id="queue-position">1</span>). Väntar på ledig plats…</p>
+              <button type="button" class="btn btn-secondary" id="queue-leave-btn">Lämna kö</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- Regler -->
+        <div class="page-section" id="regler" aria-labelledby="regler-title">
+          <h2 id="regler-title" class="page-section-title">Regler</h2>
+          <div class="page-section-content">
+            <p>Här kan du redigera reglerna för Fågelviken RP. Redigera filen <code>public/dashboard.html</code> och sök efter id="regler" för att ändra texten nedan.</p>
+            <h3>Allmänna regler</h3>
+            <ul>
+              <li>Respektera alla spelare och staff.</li>
+              <li>Håll rollspel seriöst – ingen metagaming eller powergaming.</li>
+              <li>Följ Discord-reglerna och serverreglerna vid RDM/VDM.</li>
+            </ul>
+            <p>Mer detaljerade regler hittar du i vår Discord.</p>
+          </div>
+        </div>
+
+        <!-- Whitelist -->
+        <div class="page-section" id="whitelist" aria-labelledby="whitelist-title">
+          <h2 id="whitelist-title" class="page-section-title">Whitelist</h2>
+          <div class="page-section-content">
+            <p>Information om hur du ansöker till whitelist. Redigera innehållet i <code>dashboard.html</code> (id="whitelist") för att anpassa.</p>
+            <p>Vanligtvis krävs en ansökan via forum eller Discord. Kontakta staff om du har frågor.</p>
+          </div>
+        </div>
+
+        <!-- Rapporter -->
+        <div class="page-section" id="reports" aria-labelledby="reports-title">
+          <h2 id="reports-title" class="page-section-title">Rapporter</h2>
+          <div class="page-section-content">
+            <p>Vill du rapportera en spelare eller händelse? Redigera denna sektion i <code>dashboard.html</code> (id="reports").</p>
+            <p>Skicka gärna rapporter till staff via Discord med datum, tid och en kort beskrivning.</p>
+          </div>
+        </div>
+
+        <!-- Support -->
+        <div class="page-section" id="support" aria-labelledby="support-title">
+          <h2 id="support-title" class="page-section-title">Support</h2>
+          <div class="page-section-content">
+            <p>Behöver du hjälp? Redigera denna sektion i <code>dashboard.html</code> (id="support").</p>
+            <p>Joina vår Discord för snabbast svar från staff och community.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+
+  <!-- Modal: plats tillgänglig – acceptera för att joina -->
+  <div class="modal-overlay" id="queue-modal" role="dialog" aria-modal="true" aria-labelledby="queue-modal-title" aria-describedby="queue-modal-desc" hidden>
+    <div class="modal-box">
+      <button type="button" class="modal-close-x" id="queue-modal-close-x" aria-label="Avbryt och lämna kö"></button>
+      <div id="queue-modal-main">
+        <h2 id="queue-modal-title" class="modal-title">Det finns plats på servern</h2>
+        <p id="queue-modal-desc" class="modal-desc">Vill du ansluta nu? Du har 30 sekunder på dig att acceptera.</p>
+        <div class="modal-timer" id="queue-modal-timer">
+          <span class="modal-timer-text" id="queue-modal-timer-text">30 sekunder kvar</span>
+          <div class="modal-progress-track">
+            <div class="modal-progress-fill" id="queue-modal-progress"></div>
+          </div>
+        </div>
+        <div class="modal-actions modal-actions-full">
+          <button type="button" class="btn btn-primary btn-block" id="queue-modal-accept">Anslut</button>
+        </div>
+      </div>
+      <div class="modal-timeout" id="queue-modal-timeout" hidden>
+        <h2 class="modal-title">Tiden gick ut</h2>
+        <p class="modal-desc">Du hann inte ansluta i tid. Ställ dig i kö igen för att få en ny chans.</p>
+        <div class="modal-actions modal-actions-full">
+          <button type="button" class="btn btn-primary btn-block" id="queue-modal-close">Stäng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
