@@ -14,6 +14,7 @@ const DB_HOST = process.env.DB_HOST;
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_DATABASE = process.env.DB_DATABASE;
+const DB_PORT = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306;
 const DB_TABLE = process.env.DB_TABLE || 'characters';
 const DB_COLUMN_DISCORD = process.env.DB_COLUMN_DISCORD || 'discord_id';
 const DB_COLUMN_NAME = process.env.DB_COLUMN_NAME || 'name';
@@ -31,8 +32,10 @@ let mysqlPool = null;
 if (USE_DB) {
   try {
     const mysql = require('mysql2/promise');
+    const port = Number.isFinite(DB_PORT) ? DB_PORT : 3306;
     mysqlPool = mysql.createPool({
       host: DB_HOST,
+      port,
       user: DB_USER,
       password: DB_PASSWORD || undefined,
       database: DB_DATABASE,
@@ -40,11 +43,13 @@ if (USE_DB) {
       connectionLimit: 5,
       queueLimit: 0,
     });
-    console.log('MySQL ansluten för karaktärsdata (tabell: ' + DB_TABLE + ')');
+    console.log('MySQL karaktärer: ansluten till', DB_HOST + ':' + port + '/' + DB_DATABASE);
   } catch (e) {
     console.warn('MySQL kunde inte laddas:', e.message);
     mysqlPool = null;
   }
+} else {
+  console.log('MySQL karaktärer: inte konfigurerad (sätt DB_HOST, DB_USER, DB_DATABASE)');
 }
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -251,6 +256,7 @@ app.get('/api/player-stats', async (req, res) => {
       const colPlaytime = !useMetadataPlaytime ? safeId(DB_COLUMN_PLAYTIME) : null;
 
       if (!table || !colDiscord || !colJob) {
+        console.log('MySQL karaktärer: saknade tabell/kolumn-konfig');
         return res.json({ characters: [], totalPlaytimeMinutes: 0 });
       }
       if (!useFirstLast && !colName) return res.json({ characters: [], totalPlaytimeMinutes: 0 });
@@ -267,6 +273,13 @@ app.get('/api/player-stats', async (req, res) => {
         `SELECT ${nameSel}, \`${colJob}\` AS job, ${moneySel}, ${playtimeSel} FROM \`${table}\` WHERE \`${colDiscord}\` = ?`,
         [String(discordId)]
       );
+
+      const rowCount = (rows && rows.length) || 0;
+      if (rowCount === 0) {
+        console.log('MySQL karaktärer: 0 rader för discordId=', discordId);
+      } else {
+        console.log('MySQL karaktärer:', rowCount, 'karaktärer för discordId=', discordId);
+      }
 
       const playtimeKey = DB_PLAYTIME_JSON_KEY;
 
@@ -308,7 +321,7 @@ app.get('/api/player-stats', async (req, res) => {
       const totalPlaytimeMinutes = characters.reduce((sum, c) => sum + (c.playtimeMinutes || 0), 0);
       return res.json({ characters, totalPlaytimeMinutes });
     } catch (e) {
-      console.error('MySQL karaktärer:', e.message);
+      console.error('MySQL karaktärer fel:', e.message);
       return res.json({ characters: [], totalPlaytimeMinutes: 0 });
     }
   }
