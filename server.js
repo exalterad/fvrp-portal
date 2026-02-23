@@ -55,6 +55,9 @@ const DISCORD_CALLBACK_URL = process.env.DISCORD_CALLBACK_URL || `http://localho
 const FIVEM_IP = process.env.FIVEM_SERVER_IP || 'localhost';
 const FIVEM_PORT = process.env.FIVEM_SERVER_PORT || '30120';
 
+// Bakom Railway/nginx etc.: så att cookies och HTTPS fungerar
+app.set('trust proxy', 1);
+
 // Uptime: spåra när servern först sågs online (om FiveM inte skickar uptime)
 let serverUpSince = null;
 
@@ -89,6 +92,7 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    sameSite: 'lax',
   },
 }));
 
